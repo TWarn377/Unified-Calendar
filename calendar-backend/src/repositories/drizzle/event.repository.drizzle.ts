@@ -8,7 +8,7 @@ import { between, eq, or} from "drizzle-orm";
 /**
  * Repository for managing Event entities in the database using Drizzle ORM.
  */
-export class EventRepository {
+export class EventRepository implements EventRepository {
 
     /**
      * Creates a new event in the database.

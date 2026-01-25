@@ -6,7 +6,7 @@ import { DomainToDrizzleDatabaseMapper } from "./mapper/domain-to-database.mappe
 import { eq } from "drizzle-orm";
 
 
-export class ObjectiveRepository {
+export class ObjectiveRepository implements ObjectiveRepository {
     async createObjective(objective: Objective): Promise<Objective> {
         const result: ObjectiveDatabaseRecord[] =  await db
             .insert(objectiveSchema)

@@ -6,7 +6,7 @@ import { DrizzleDatabaseToDomainMapper } from "./mapper/database-to-domain.mappe
 import { between, eq, or, inArray} from "drizzle-orm";
 
 
-export class CategoryRepository {
+export class CategoryRepository implements CategoryRepository {
 
     async createCategory(category: Category): Promise<Category> {
         const result: CategoryDatabaseRecord[] =  await db
