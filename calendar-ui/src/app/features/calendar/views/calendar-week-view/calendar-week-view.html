@@ -1,0 +1,9 @@
+<section class="calendar-week-view-container">
+    <section class="calendar-day-timeline-container">
+        @for (weekDay of week?.days; track weekDay.date.toDateString(); let index = $index) {
+            <app-calendar-day-timeline
+                [isTimelineAxisVisible]="index === 0"
+                [inputDate]="weekDay.date"></app-calendar-day-timeline>
+        }
+    </section>
+</section>

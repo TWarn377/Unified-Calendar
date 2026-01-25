@@ -1,0 +1,33 @@
+<section class="calendar-task-view-container">
+    <section class="calendar-task-view-banner-header">
+        <app-core-page-indicator-dots
+        [items]="paginatorItems()"
+        [maxItemsPerPage]="5"
+        (selectedIndexChange)="currentEventIndex.set($event)"
+        ></app-core-page-indicator-dots>
+        <section class="event-range-toggle-buttons">
+            <button 
+                (click)="state.set('today')" 
+                [class.active]="state() === 'today'"
+                matTooltip="Today's Events">
+                <span class="material-symbols-outlined">event</span>
+            </button>
+            <button 
+                (click)="state.set('upcoming')" 
+                [class.active]="state() === 'upcoming'"
+                matTooltip="Upcoming Events">
+                <span class="material-symbols-outlined">date_range</span>
+            </button>
+        </section>
+    </section>
+
+    <section class="current-event">
+        <section class="current-event-header">
+            <h2 class="current-event-title">{{ currentEvent().title }}</h2>
+            <p class="current-event-time">{{ currentEvent().startDate | date: 'MM/dd hh:mm a'}} - {{ currentEvent().endDate | date: 'hh:mm a'}}</p>
+        </section>
+        <section class="current-event-details">
+            <p>{{currentEvent().details}}</p>
+        </section>
+    <section>
+</section>

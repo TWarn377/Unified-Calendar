@@ -1,0 +1,10 @@
+<section
+    class="calendar-day-timeline-event-container"
+    [style.top.rem]="eventGridItem?.verticalIndex"
+    [style.left.%]="eventGridItem?.horizontalIndex"
+    [style.height.rem]="eventGridItem?.height"
+    [style.width.%]="eventGridItem?.width"
+>
+    <h2>{{ eventGridItem?.event?.title || '' }}</h2>
+
+</section>

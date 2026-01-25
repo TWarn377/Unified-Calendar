@@ -1,0 +1,26 @@
+<section class="calendar-year-view-container">
+  <section class="calendar-month-view-header">
+    <div class="spacer"></div>
+    <section class="title">
+      <button (click)="previousYear()">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      {{ currentDate.getFullYear() }}
+      <button (click)="nextYear()">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </section>
+    <button (click)="setDateAsToday()"><span class="material-symbols-outlined">today</span></button>
+  </section>
+
+  <section class="calendar-year-view-grid">
+    @for (month of months; track month.monthIndex) {
+        <button
+            class="calendar-year-view-month"
+            [class.highlighted]="isMonthHighlighted(month.monthIndex)"
+            (click)="setMonth(month.monthIndex)">
+          {{ month.monthName }}
+        </button>
+    }
+  </section>
+</section>

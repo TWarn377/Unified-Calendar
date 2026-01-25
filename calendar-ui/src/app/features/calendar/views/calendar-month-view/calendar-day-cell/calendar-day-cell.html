@@ -1,0 +1,12 @@
+  <section class="calendar-day-cell"
+    [class.highlighted]="isDayHighlighted()"
+    (click)="onClick()">
+    {{ dayData?.date?.getDate() }}
+    <section class="event-objective-dots">
+      @for (dot of eventObjectiveDots(); track dot.objectiveId) {
+        <div class="event-objective-dot"
+         [style.backgroundColor]="dot.objectiveColor">
+        </div>
+      }
+    </section>
+  </section>

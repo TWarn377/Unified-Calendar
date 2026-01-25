@@ -1,0 +1,20 @@
+<nav class="navigation">
+    <button matButton color="primary">Add</button>
+
+    <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+        <mat-button-toggle (click)="goToView('day')" value="Day">
+            Day
+        </mat-button-toggle>
+        <mat-button-toggle (click)="goToView('week')" value="Week">
+            Week
+        </mat-button-toggle>
+        <mat-button-toggle (click)="goToView('month')" value="Month">
+            Month
+        </mat-button-toggle>
+        <mat-button-toggle (click)="goToView('year')" value="Year">
+            Year
+        </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <button matButton color="primary">Settings</button>
+</nav>

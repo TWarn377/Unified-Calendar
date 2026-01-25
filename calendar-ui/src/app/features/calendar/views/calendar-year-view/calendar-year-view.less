@@ -1,0 +1,45 @@
+.calendar-year-view-container {
+    display: flex;
+    flex-direction: column;
+    width: 32rem;
+    height: 100%;
+}
+
+.calendar-month-view-header {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+    width: 100%;
+}
+
+.title {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.calendar-year-view-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.calendar-year-view-month {
+    width: 100%;
+    border-radius: 0.75rem;
+    min-height: 40px;
+    max-height: 60px;
+    aspect-ratio: 1;
+    margin: 0.25rem;
+    padding: 0.25rem;
+}
+
+.calendar-year-view-month.highlighted {
+    background-color: rgba(0, 0, 0, 0.1);
+}

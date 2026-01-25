@@ -1,0 +1,34 @@
+.calendar-day-timeline-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+    //overflow-y: auto;
+}
+
+
+
+.calendar-day-timeline {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.calendar-day-timeline-axis {
+    display: grid;
+    grid-auto-rows: 1fr;
+    width: 4rem;
+}
+
+.calendar-day-timeline-axis-item {
+    border-top: 1px solid #000;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.calendar-day-timeline-axis-item-text {
+    margin: 0;
+    padding: 0;
+    font-size: 0.5rem;
+    line-height: 1;
+}

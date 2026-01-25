@@ -1,0 +1,25 @@
+
+<div class="calendar-month-view-container">
+  <section class="calendar-month-view-header">
+    <div></div>
+    <section class="title">
+      <button (click)="previousMonth()"><span class="material-symbols-outlined">chevron_left</span></button>
+      {{ monthTitle }}
+      <button (click)="nextMonth()"><span class="material-symbols-outlined">chevron_right</span></button>
+    </section>
+    <button (click)="setDateAsToday()"><span class="material-symbols-outlined">today</span></button>
+  </section>
+
+  <table class="calendar-month-view">
+    <thead class="calendar-month-header">
+      <tr>
+        <th *ngFor="let dayName of weekDayNames">{{ dayName }}</th>
+      </tr>
+    </thead>
+    <tbody class ="calendar-month-weeks">
+      @for (calendarWeek of monthGrid; track calendarWeek.weekNumber) {
+        <app-calendar-week-row [weekData]="calendarWeek" [currentDate]="currentDate"></app-calendar-week-row>
+      }
+    </tbody>
+  </table>
+</div>

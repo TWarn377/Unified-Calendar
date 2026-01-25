@@ -1,0 +1,18 @@
+<section class="calendar-day-timeline-container"
+    [style.height.rem]="VERTICAL_REM_PER_HOUR * 24">
+    <section class="calendar-day-timeline-axis"
+        *ngIf="isTimelineAxisVisible">
+        @for(eventGridLayoutItem of eventGridLayout; track $index; let index = $index) {
+            <section class="calendar-day-timeline-axis-item">
+                <p class="calendar-day-timeline-axis-item-text">{{index}} - {{getHourFromIndex(index)}}:{{getMinuteFromIndex(index)}}</p>
+            </section>
+        }
+    </section>
+    <section class="calendar-day-timeline">
+        @for(eventGridItem of eventGridItems(); track eventGridItem.event.id) {
+            <app-calendar-day-timeline-event
+                [eventGridItem]="eventGridItem"
+            ></app-calendar-day-timeline-event>
+        }
+    </section>
+</section>

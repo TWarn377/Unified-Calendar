@@ -1,0 +1,12 @@
+<section class="calendar-day-view-container">
+  <section class="calendar-day-view-header">
+    <div></div>
+    <section class="title">
+      <button (click)="previousDay()"><span class="material-symbols-outlined">chevron_left</span></button>
+      {{ currentDate | date: getDayTitleFormat() }}
+      <button (click)="nextDay()"><span class="material-symbols-outlined">chevron_right</span></button>
+    </section>
+    <button (click)="setDateAsToday()"><span class="material-symbols-outlined">today</span></button>
+  </section>
+  <app-calendar-day-timeline></app-calendar-day-timeline>
+</section>

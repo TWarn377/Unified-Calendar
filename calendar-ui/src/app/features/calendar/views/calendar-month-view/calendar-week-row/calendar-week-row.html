@@ -1,0 +1,11 @@
+<section 
+  class="calendar-week-row"
+  [class.highlighted]="isWeekHighlighted()"
+  >
+  @for (calendarDay of weekData?.days; track calendarDay.date) {
+    <app-calendar-day-cell 
+      [dayData]="calendarDay"
+      [currentDate]="currentDate">
+    </app-calendar-day-cell>
+  }
+</section>
