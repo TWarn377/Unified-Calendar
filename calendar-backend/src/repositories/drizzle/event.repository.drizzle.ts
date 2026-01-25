@@ -35,11 +35,9 @@ export class EventRepository {
             .from(eventSchema)
             .where(eq(eventSchema.id, EventId)) as EventDatabaseRecord[];
 
-        if (results.length === 0) {
-            return null;
-        } else {
-            return DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToEvent(results[0]);
-        }        
+        return results.length > 0 ? 
+            DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToEvent(results[0]) 
+            : null;
     }
 
     /**
