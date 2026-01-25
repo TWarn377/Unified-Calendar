@@ -4,11 +4,12 @@ import { categorySchema, type CategoryDatabaseRecord } from "../../infrastructur
 import { DomainToDrizzleDatabaseMapper } from "./mapper/domain-to-database.mapper.ts";
 import { DrizzleDatabaseToDomainMapper } from "./mapper/database-to-domain.mapper.ts";
 import { between, eq, or, inArray} from "drizzle-orm";
+import type { CategoryRepository } from "../interfaces/category.repository.ts";
 
 
-export class CategoryRepository implements CategoryRepository {
+export class CategoryDrizzleRepository implements CategoryRepository {
 
-    async createCategory(category: Category): Promise<Category> {
+    public async CreateCategory(category: Category): Promise<Category> {
         const result: CategoryDatabaseRecord[] =  await db
             .insert(categorySchema)
             .values(DomainToDrizzleDatabaseMapper.MapCategoryToDatabase(category))
@@ -17,7 +18,7 @@ export class CategoryRepository implements CategoryRepository {
         return DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToCategory(result[0]);
     }
 
-    async getCategoryById(categoryId: number): Promise<Category | null> {
+    public async GetCategoryById(categoryId: number): Promise<Category | null> {
         const results: CategoryDatabaseRecord[] = await db
             .select()
             .from(categorySchema)
@@ -26,7 +27,7 @@ export class CategoryRepository implements CategoryRepository {
         return results.length > 0 ? DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToCategory(results[0]) : null;
     }
 
-    async getCategoriesByIds(categoryIds: number[]): Promise<Category[]> {
+    public async GetCategoriesByIds(categoryIds: number[]): Promise<Category[]> {
         const results: CategoryDatabaseRecord[] = await db
             .select()
             .from(categorySchema)
@@ -35,7 +36,7 @@ export class CategoryRepository implements CategoryRepository {
         return results.map(result => DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToCategory(result));
     }
 
-    async getCategoriesForObjective(objectiveId: number): Promise<Category[]> {
+    public async GetCategoriesForObjective(objectiveId: number): Promise<Category[]> {
         const results: CategoryDatabaseRecord[] = await db
             .select()
             .from(categorySchema)
@@ -44,7 +45,7 @@ export class CategoryRepository implements CategoryRepository {
         return results.map(result => DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToCategory(result));
     }
 
-    async updateCategory(category: Category): Promise<Category> {
+    public async UpdateCategory(category: Category): Promise<Category> {
         const result: CategoryDatabaseRecord[] = await db
             .update(categorySchema)
             .set(DomainToDrizzleDatabaseMapper.MapCategoryToDatabase(category))
@@ -54,7 +55,7 @@ export class CategoryRepository implements CategoryRepository {
         return DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToCategory(result[0]);
     }
 
-    async deleteCategory(categoryId: number): Promise<void> {
+    public async DeleteCategory(categoryId: number): Promise<void> {
         await db.delete(categorySchema).where(eq(categorySchema.id, categoryId));
     }
 

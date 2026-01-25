@@ -1,7 +1,8 @@
+import type { Objective } from "../../models/objective.model.ts";
 
-export interface EventRepository {
-    createEvent(event: Event): Promise<Event>;
-    getEventById(eventId: number): Promise<Event | null>;
-    getEventsWithinDates(startDate: Date, endDate: Date): Promise<Event[]>;
-    updateEvent(event: Event): Promise<Event>;
+export interface ObjectiveRepository {
+    CreateObjective(objective: Objective): Promise<Objective>;
+    GetObjectiveById(objectiveId: number): Promise<Objective | null>;
+    UpdateObjective(objective: Objective): Promise<Objective>;
+    DeleteObjective(objectiveId: number): Promise<void>;
 }

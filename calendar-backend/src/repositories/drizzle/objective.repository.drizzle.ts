@@ -1,13 +1,14 @@
 import { db } from "../../infrastructure/internal-database/db.ts";
 import { objectiveSchema, type ObjectiveDatabaseRecord } from "../../infrastructure/internal-database/schemas/objective.schema.ts";
 import type { Objective } from "../../models/objective.model.ts";
+import type { ObjectiveRepository } from "../interfaces/objective.repository.ts";
 import { DrizzleDatabaseToDomainMapper } from "./mapper/database-to-domain.mapper.ts";
 import { DomainToDrizzleDatabaseMapper } from "./mapper/domain-to-database.mapper.ts";
 import { eq } from "drizzle-orm";
 
 
-export class ObjectiveRepository implements ObjectiveRepository {
-    async createObjective(objective: Objective): Promise<Objective> {
+export class ObjectiveDrizzleRepository implements ObjectiveRepository {
+    public async CreateObjective(objective: Objective): Promise<Objective> {
         const result: ObjectiveDatabaseRecord[] =  await db
             .insert(objectiveSchema)
             .values(DomainToDrizzleDatabaseMapper.MapObjectiveToDatabase(objective))
@@ -16,7 +17,7 @@ export class ObjectiveRepository implements ObjectiveRepository {
         return DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToObjective(result[0]);
     }
 
-    async getObjectiveById(objectiveId: number): Promise<Objective | null> {
+    public async GetObjectiveById(objectiveId: number): Promise<Objective | null> {
         const results: ObjectiveDatabaseRecord[] = await db
             .select()
             .from(objectiveSchema)
@@ -28,7 +29,7 @@ export class ObjectiveRepository implements ObjectiveRepository {
 
     }
 
-    async updateObjective(objective: Objective): Promise<Objective> {
+    public async UpdateObjective(objective: Objective): Promise<Objective> {
         const result: ObjectiveDatabaseRecord[] = await db
             .update(objectiveSchema)
             .set(DomainToDrizzleDatabaseMapper.MapObjectiveToDatabase(objective))
@@ -36,5 +37,9 @@ export class ObjectiveRepository implements ObjectiveRepository {
             .returning() as ObjectiveDatabaseRecord[];
 
         return DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToObjective(result[0]);
+    }
+
+    public async DeleteObjective(objectiveId: number): Promise<void> {
+        await db.delete(objectiveSchema).where(eq(objectiveSchema.id, objectiveId));
     }
 }
