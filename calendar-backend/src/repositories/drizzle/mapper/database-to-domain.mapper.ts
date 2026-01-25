@@ -19,6 +19,15 @@ export class DrizzleDatabaseToDomainMapper {
         }
     }
 
+    public static MapDrizzleDatabaseToCategory(dbCategory: any ): any {
+        return {
+            id: dbCategory.id,
+            name: dbCategory.name,
+            color: dbCategory.color,
+            description: dbCategory.description
+        }
+    }
+
     public static MapDrizzleDatabaseToObjective(dbObjective: ObjectiveDatabaseRecord ): Objective {
         return {
             id: dbObjective.id,
