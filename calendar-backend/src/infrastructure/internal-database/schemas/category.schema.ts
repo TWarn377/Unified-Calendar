@@ -1,20 +1,22 @@
-import { pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { objectiveSchema } from "./objective.schema.ts";
+import { getNow } from "../../database-utilities.ts";
 
-export const categorySchema = pgTable("categories", {
-    id: serial("id").primaryKey(),
-    createdOn: timestamp("created_on").defaultNow().notNull(),
-    updatedOn: timestamp("updated_on").defaultNow().notNull(),
-    name: varchar("name", { length: 255 }).notNull(),
-    objectiveId: serial("objective_id").notNull(),
-    description: varchar("description", { length: 1024 }),
-    color: varchar("color", { length: 7 }).notNull(),
+
+export const categorySchema = sqliteTable("categories", {
+    id: integer("id").primaryKey(),
+    createdOn: text("created_on").default(getNow()).notNull(),
+    updatedOn: text("updated_on").default(getNow()).notNull(),
+    name: text("name").notNull(),
+    objectiveId: integer("objective_id").notNull(),
+    description: text("description"),
+    color: text("color").notNull(),
 });
 
-export const categoryObjectiveSchema = pgTable("category_objectives", {
-    categoryId: serial("category_id")
+export const categoryObjectiveSchema = sqliteTable("category_objectives", {
+    categoryId: integer("category_id")
         .notNull().references(() => categorySchema.id),
-    objectiveId: serial("objective_id")
+    objectiveId: integer("objective_id")
         .notNull().references(() => objectiveSchema.id),
 });
 

@@ -9,4 +9,4 @@ app.route("/categories", CategoryController);
 app.route("/events", EventController);
 app.route("/objectives", ObjectiveController);
 
-export default app ;
+export default app;

@@ -1,23 +1,23 @@
-import { pgTable, pgEnum, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { categorySchema } from "./category.schema.ts";
+import { getNow } from "../../database-utilities.ts";
 
-
-export const eventSchema = pgTable("events", {
-    id: serial("id").primaryKey(),
-    createdOn: timestamp("created_on").defaultNow().notNull(),
-    updatedOn: timestamp("updated_on").defaultNow().notNull(),
-    title: varchar("title", { length: 255 }).notNull(),
-    startDate: timestamp("start_date").notNull(),
-    endDate: timestamp("end_date").notNull(),
-    location: varchar("location", { length: 255 }),
-    description: varchar("description", { length: 1024 }),
-    source: varchar("source", { length: 255 }).notNull(),
+export const eventSchema = sqliteTable("events", {
+    id: integer("id").primaryKey(),
+    createdOn: text("created_on").default(getNow()).notNull(),
+    updatedOn: text("updated_on").default(getNow()).notNull(),
+    title: text("title").notNull(),
+    startDate: text("start_date").notNull(),
+    endDate: text("end_date").notNull(),
+    location: text("location"),
+    description: text("description"),
+    source: text("source").notNull(),
 });
 
-export const eventCategorySchema = pgTable("event_categories", {
-    eventId: serial("event_id")
+export const eventCategorySchema = sqliteTable("event_categories", {
+    eventId: integer("event_id")
         .notNull().references(() => eventSchema.id),
-    categoryId: serial("category_id")
+    categoryId: integer("category_id")
         .notNull()
         .references(() => categorySchema.id),
 });

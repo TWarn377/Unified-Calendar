@@ -1,10 +1,13 @@
-import { pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer} from "drizzle-orm/sqlite-core";
+import { getNow } from "../../database-utilities.ts";
 
-export const objectiveSchema = pgTable("objectives", {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 255 }).notNull(),
-    description: varchar("description", { length: 1024 }),
-    color: varchar("color", { length: 7 }).notNull(),
+export const objectiveSchema = sqliteTable("objectives", {
+    id: integer("id").primaryKey(),
+    createdOn: text("created_on").default(getNow()).notNull(),
+    updatedOn: text("updated_on").default(getNow()).notNull(),
+    name: text("name").notNull(),
+    description: text("description"),
+    color: text("color").notNull(),
 });
 
 // Interface representing an Objective record in the database

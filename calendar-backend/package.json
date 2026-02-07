@@ -4,20 +4,21 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "generate-db-migration": "npx drizzle-kit generate --config ./src/infrastructure/internal-database/drizzle.config.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.9",
     "@libsql/client": "^0.17.0",
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.2.4",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.11.5"
   },
   "devDependencies": {
+    "@hono/zod-openapi": "^1.2.0",
     "@types/node": "^20.11.17",
     "drizzle-kit": "^0.31.8",
     "tsx": "^4.21.0",
-    "typescript": "^5.8.3",
-    "@hono/zod-openapi": "^1.2.0"
+    "typescript": "^5.8.3"
   }
 }
