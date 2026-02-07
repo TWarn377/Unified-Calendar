@@ -1,18 +1,15 @@
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
-import 'dotenv/config';
-import { db } from './infrastructure/internal-database/db.ts';
+import { serve, type ServerType } from '@hono/node-server'
+import ENV from 'dotenv/config';
+import app from './app.ts';
+import type { AddressInfo } from 'net';
 
-const app = new Hono()
-const dbt = db;
+const PORT = process.env.PORT || 3000;
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
-serve({
+const server: ServerType = serve({
   fetch: app.fetch,
-  port: 3000
-}, (info) => {
-  console.log(`Server is running on http://localhost:${info.port}`)
-})
+  port: Number(PORT),
+});
+
+const severAddress = server.address() as AddressInfo;
+
+console.log(`Server running on ${severAddress.address}:${severAddress.port}`);
