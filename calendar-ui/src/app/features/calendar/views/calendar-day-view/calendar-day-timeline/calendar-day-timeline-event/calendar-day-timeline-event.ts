@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { EventGridItem } from '../../features/calendar/models/calendar-event-grid-item.model';
+import { EventGridItem } from '../../../../models/calendar-event-grid-item.model';
 
 @Component({
   selector: 'app-calendar-day-timeline-event',

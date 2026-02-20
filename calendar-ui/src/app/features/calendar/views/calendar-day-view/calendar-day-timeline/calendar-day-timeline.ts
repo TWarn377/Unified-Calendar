@@ -1,8 +1,8 @@
 import { Component, effect, Input, OnChanges, SimpleChanges, signal } from '@angular/core';
-import { CalendarEvent } from '../features/calendar/models/calendar-event.model';
-import { DateService } from '../features/calendar/services/date-service/date-service';
-import { CalendarEventService } from '../features/calendar/services/calendar-event-service/calendar-event-service';
-import { EventGridItem } from '../features/calendar/models/calendar-event-grid-item.model';
+import { CalendarEvent } from '../../../models/calendar-event.model';
+import { DateService } from '../../../services/date-service/date-service';
+import { CalendarEventService } from '../../../services/calendar-event-service/calendar-event-service';
+import { EventGridItem } from '../../../models/calendar-event-grid-item.model';
 
 @Component({
   selector: 'app-calendar-day-timeline',

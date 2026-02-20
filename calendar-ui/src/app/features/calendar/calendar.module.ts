@@ -13,8 +13,8 @@ import { MaterialModule } from "../../shared/material/material.module";
 import { CalendarTaskViewBanner } from "./views/calendar-task-view/calendar-task-view-banner/calendar-task-view-banner";
 import { CalendarWeekRow } from "./views/calendar-month-view/calendar-week-row/calendar-week-row";
 import { CalendarDayCell } from "./views/calendar-month-view/calendar-day-cell/calendar-day-cell";
-import { CalendarDayTimeline } from "../../calendar-day-timeline/calendar-day-timeline";
-import { CalendarDayTimelineEvent } from "../../calendar-day-timeline/calendar-day-timeline-event/calendar-day-timeline-event";
+import { CalendarDayTimeline } from "./views/calendar-day-view/calendar-day-timeline/calendar-day-timeline";
+import { CalendarDayTimelineEvent } from "./views/calendar-day-view/calendar-day-timeline/calendar-day-timeline-event/calendar-day-timeline-event";
 import { CalendarYearView } from "./views/calendar-year-view/calendar-year-view";
 
 @NgModule({
