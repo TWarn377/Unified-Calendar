@@ -3,7 +3,7 @@ export interface CalendarEvent {
     title: string,
     categoryId: number,
     isImportant: boolean, /* Used to determine if events should be shown in the month view */
-    location: string,
+    location?: string,
     url?: string,
     details: string,
     startDate: Date,
