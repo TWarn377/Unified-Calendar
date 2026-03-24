@@ -18,10 +18,9 @@ eventsApp.get("/:id", async (c) => {
 
         });
 
-eventsApp.post("/:id", async (c) => { 
-            const eventId = Number(c.req.param("id"));
+eventsApp.post("/", async (c) => { 
             const body = await c.req.json();
-            const event = await eventService.CreateEvent({ ...body, id: eventId } as Event);
+            const event = await eventService.CreateEvent(body as Event);
             return c.json(event);
         });
 
@@ -29,6 +28,12 @@ eventsApp.put("/:id", async (c) => {
             const eventId = Number(c.req.param("id"));
             const body = await c.req.json();
             const event = await eventService.UpdateEvent({ ...body, id: eventId } as Event);
+            return c.json(event);
+        });
+
+eventsApp.patch("/", async (c) => {
+            const body = await c.req.json();
+            const event = await eventService.UpdateEvent(body as Event);
             return c.json(event);
         });
 

@@ -8,6 +8,10 @@ export class ObjectiveService {
         return this.objectiveRepository.CreateObjective(objective);
     }
 
+    public async GetAllObjectives(): Promise<Objective[]> {
+        return this.objectiveRepository.GetObjectives();
+    }
+
     public async GetObjectiveById(objectiveId: number): Promise<Objective | null> {
         return this.objectiveRepository.GetObjectiveById(objectiveId);
     }

@@ -2,7 +2,6 @@ import { OpenAPIHono } from "@hono/zod-openapi"
 import { ProvideCategoryService } from "../services/providers-drizzle/drizzle-service-provider.ts";
 import type { Category } from "../models/category.model.ts";
 import { CategoryService } from "../services/category.service.ts";
-import eventsApp from "./event-controller.ts";
 
 const categoryService: CategoryService = ProvideCategoryService();
 const categoryApp: OpenAPIHono = new OpenAPIHono();
@@ -17,21 +16,31 @@ categoryApp.get("/:id", async (c) => {
     }
 });
 
-eventsApp.post("/:id", async (c) => {
+categoryApp.post("/", async (c) => {
+    const body = await c.req.json();
+
+    const category = await categoryService.AddCategory(body as Category);
+    return c.json(category);
+});
+
+categoryApp.put("/:id", async (c) => {
     const categoryId = Number(c.req.param("id"));
     const body = await c.req.json();
     const category = await categoryService.UpdateCategory({ ...body, id: categoryId } as Category);
     return c.json(category);
 });
 
-eventsApp.put("/:id", async (c) => {
+categoryApp.patch("/:id", async (c) => {
     const categoryId = Number(c.req.param("id"));
+    const originalCategory = await categoryService.GetCategoryById(categoryId);
+    if (!originalCategory) { return c.status(404); }
+
     const body = await c.req.json();
-    const category = await categoryService.UpdateCategory({ ...body, id: categoryId } as Category);
+    const category = await categoryService.UpdateCategory({ ...originalCategory, ...body } as Category);
     return c.json(category);
 });
 
-eventsApp.delete("/:id", async (c) => {
+categoryApp.delete("/:id", async (c) => {
     const categoryId = Number(c.req.param("id"));
     await categoryService.DeleteCategory(categoryId);
     return c.status(204);

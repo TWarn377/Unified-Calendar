@@ -6,6 +6,11 @@ import { ProvideObjectiveService } from "../services/providers-drizzle/drizzle-s
 const objectiveService = ProvideObjectiveService();
 const objectiveApp: OpenAPIHono = new OpenAPIHono();
 
+objectiveApp.get("/", async (c) => {
+    const objectives = await objectiveService.GetAllObjectives();
+    return c.json(objectives);
+});
+
 objectiveApp.get("/:id", async (c) => {
     const objectiveId = Number(c.req.param("id"));
     const objective = await objectiveService.GetObjectiveById(objectiveId);
@@ -27,6 +32,16 @@ objectiveApp.put("/:id", async (c) => {
     const objectiveId = Number(c.req.param("id"));
     const body = await c.req.json();
     const objective = await objectiveService.UpdateObjective({ ...body, id: objectiveId } as Objective);
+    return c.json(objective);
+});
+
+objectiveApp.patch("/:id", async (c) => {
+    const objectiveId = Number(c.req.param("id"));
+    const body = await c.req.json();
+    const originalObjective = await objectiveService.GetObjectiveById(objectiveId);
+    if (!originalObjective) { return c.status(404); }
+    
+    const objective = await objectiveService.UpdateObjective({ ...originalObjective, ...body } as Objective);
     return c.json(objective);
 });
 

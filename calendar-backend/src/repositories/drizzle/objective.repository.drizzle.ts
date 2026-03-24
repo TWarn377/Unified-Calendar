@@ -17,6 +17,14 @@ export class ObjectiveDrizzleRepository implements ObjectiveRepository {
         return DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToObjective(result[0]);
     }
 
+    public async GetObjectives(): Promise<Objective[]> {
+        const results: ObjectiveDatabaseRecord[] = await db
+            .select()
+            .from(objectiveSchema) as ObjectiveDatabaseRecord[];
+
+        return results.map(DrizzleDatabaseToDomainMapper.MapDrizzleDatabaseToObjective);
+    }
+
     public async GetObjectiveById(objectiveId: number): Promise<Objective | null> {
         const results: ObjectiveDatabaseRecord[] = await db
             .select()
