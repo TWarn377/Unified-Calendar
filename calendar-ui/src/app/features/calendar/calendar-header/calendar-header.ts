@@ -24,6 +24,9 @@ export class CalendarHeader {
       case 'year':
         this.router.navigate(['/year']);
         break;
+      case 'add-event':
+        this.router.navigate(['/event/add']);
+        break;
       default:
         break;
     }

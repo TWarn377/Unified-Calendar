@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { CalendarEventObjective } from '../../models/calendar-event.model';
 import { CALENDAR_OBJECTIVE_CATEGORY_MAP } from '../calendar-mock-data/calendar-mock-data';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CalendarEventObjectiveService {
+  constructor(private http: HttpClient) {}
+
   private objectives: Array<CalendarEventObjective> = [
     { id: 1, name: 'Life', color: '#2072AF' }, // Cornflower Ocean Blue
     { id: 2, name: 'Work', color: '#177245' }, // Dark Emerald Green
@@ -22,13 +25,16 @@ export class CalendarEventObjectiveService {
   }
 
   public getObjectiveById(objectiveId: number): CalendarEventObjective | null { 
-    const objective = this.objectives.find(obj => obj.id === objectiveId);
-    if (objective) {
-      return objective;
-    } else {
-      // TO-DO: Fetch Objective from server if not found locally
-      return null;
+    let objective = this.objectives.find(obj => obj.id === objectiveId);
+    if (!objective) {
+      this.http.get<CalendarEventObjective>(`/api/objectives/${objectiveId}`).subscribe(
+        (data) => {
+          this.objectives.push(data);
+          objective = data;
+        }
+      );
     }
+    return objective || null;
   }
 
   public getCategoriesForObjective(objectiveId: number): Array<number> | null {

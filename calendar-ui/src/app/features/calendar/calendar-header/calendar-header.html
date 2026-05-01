@@ -1,5 +1,5 @@
 <nav class="navigation">
-    <button matButton color="primary">Add</button>
+    <button matButton color="primary" (click)="goToView('add-event')">Add</button>
 
     <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
         <mat-button-toggle (click)="goToView('day')" value="Day">

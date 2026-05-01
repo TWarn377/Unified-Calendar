@@ -26,4 +26,8 @@ export class CalendarEventCategoryService {
     }
   }
 
+  fetchCategoryById(categoryId: number): CalendarEventCategory | null {
+    // TO-DO: Implement server fetch logic here
+    return null;
+  }
 }

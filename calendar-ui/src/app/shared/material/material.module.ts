@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
-  // imports: [],
   exports: [
     MatIconModule,
     MatButtonToggleModule,

@@ -1,26 +1,42 @@
 <form>
-    <label for="title">Title</label>
-    <input formControlName="title" placeholder="Event Title"/>
+    <label appTailwindLabel for="title">Title</label>
+    <input 
+        appTailwindTextInput
+        formControlName="title" 
+        placeholder="Event Title"/>
 
-    <label for="category">Category</label>
-    <input formControlName="category" placeholder="Category" />
+    <label appTailwindLabel for="objective">Objective</label>
+    <select  formControlName="objective" placeholder="Objective">
+        @for(objective of eventObjectives; track objective.name) {
+            <option [value]="objective.name">{{ objective.name }}</option>
+        }
+    </select>
 
-    <label for="isImportant">Important</label>
-    <input formControlName="isImportant" type="checkbox" /> 
+    <label appTailwindLabel for="category">Category</label>
+    <select  formControlName="category" placeholder="Category">
+        @for(category of eventObjectives[]; track objective.name) {
+            <option [value]="objective.name">{{ objective.name }}</option>
+        }
+    </select>
 
-    <label for="location">Location</label>
+    <label appTailwindLabel for="isImportant">
+        <input appTailwindCheckbox formControlName="isImportant" type="checkbox" />
+        <span class="text-sm">Is this Important?</span>
+    </label> 
+
+    <label appTailwindLabel for="location">Location</label>
     <input formControlName="location" placeholder="Location" />
 
-    <label for="url">URL</label>
+    <label appTailwindLabel for="url">URL</label>
     <input formControlName="url" placeholder="URL" />
 
-    <label for="details">Details</label>
+    <label appTailwindLabel for="details">Details</label>
     <textarea formControlName="details" placeholder="Details"></textarea>
 
-    <label for="startDate">Start Date</label>
+    <label appTailwindLabel for="startDate">Start Date</label>
     <input formControlName="startDate" type="datetime-local" />
 
-    <label for="endDate">End Date</label>
+    <label appTailwindLabel for="endDate">End Date</label>
     <input formControlName="endDate" type="datetime-local" />
     
     <button type="submit">Add Event</button>

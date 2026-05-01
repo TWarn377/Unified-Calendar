@@ -16,9 +16,13 @@ import { CalendarDayCell } from "./views/calendar-month-view/calendar-day-cell/c
 import { CalendarDayTimeline } from "./views/calendar-day-view/calendar-day-timeline/calendar-day-timeline";
 import { CalendarDayTimelineEvent } from "./views/calendar-day-view/calendar-day-timeline/calendar-day-timeline-event/calendar-day-timeline-event";
 import { CalendarYearView } from "./views/calendar-year-view/calendar-year-view";
+import { TailwindDirectivesModule } from "../../shared/directives/tailwind/tailwind-directives.module";
+import { AddEvent } from "./add-event/add-event";
+import { provideHttpClient } from "@angular/common/http";
 
 @NgModule({
     declarations: [
+        AddEvent,
         Calendar,
         CalendarHeader,
         CalendarFooter,
@@ -38,10 +42,13 @@ import { CalendarYearView } from "./views/calendar-year-view/calendar-year-view"
     CommonModule,
     CalendarRoutingModule,
     MaterialModule,
-
-],
+    TailwindDirectivesModule,
+    ],
     exports: [
         Calendar
+    ],
+    providers: [
+        provideHttpClient()
     ]
 })
 export class CalendarModule {}

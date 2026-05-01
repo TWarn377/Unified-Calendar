@@ -1,4 +1,4 @@
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Component } from '@angular/core';
 import { CalendarEvent } from '../models/calendar-event.model';
 
@@ -9,7 +9,6 @@ import { CalendarEvent } from '../models/calendar-event.model';
   standalone: false
 })
 export class AddEvent {
-
   newEvent: CalendarEvent = {
     id: -1,
     title: '',
@@ -21,18 +20,22 @@ export class AddEvent {
     startDate: new Date(),
     endDate: new Date(),
   };
+
+  eventForm: FormGroup | undefined = undefined;
+
+  constructor(private fb: FormBuilder) {
+    this.eventForm = this.fb.group({
+      title: ['', Validators.required],
+      objective: ['', Validators.required],
+      category: ['', Validators.required],
+      isImportant: ['', Validators.required],
+      location: [''],
+      url: [''],
+      details: ['', Validators.required],
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required],
+    });
+  }
+
   
-  eventForm = this.fb.group({
-    title: ['', Validators.required],
-    category: ['', Validators.required],
-    isImportant: ['', Validators.required],
-    location: [''],
-    url: [''],
-    details: ['', Validators.required],
-    startDate: ['', Validators.required],
-    endDate: ['', Validators.required],
-  });
-
-  constructor(private fb: FormBuilder) {}
-
 }
