@@ -13,6 +13,7 @@ export const accountSchema = sqliteTable("accounts", {
     passwordHash: text("password_hash").notNull(),
 });
 
+// Interface representing an Account record in the database
 export interface AccountDatabaseRecord {
     id: number;
     createdOn: Date;

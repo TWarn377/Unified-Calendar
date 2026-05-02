@@ -13,12 +13,6 @@ export const categorySchema = sqliteTable("categories", {
     color: text("color").notNull(),
 });
 
-export const categoryObjectiveSchema = sqliteTable("category_objectives", {
-    categoryId: integer("category_id")
-        .notNull().references(() => categorySchema.id),
-    objectiveId: integer("objective_id")
-        .notNull().references(() => objectiveSchema.id),
-});
 
 // Interface representing an Event record in the database
 export interface CategoryDatabaseRecord {
@@ -28,4 +22,5 @@ export interface CategoryDatabaseRecord {
     name: string;
     description?: string;
     color: string;
+    objectiveId: number;
 }
