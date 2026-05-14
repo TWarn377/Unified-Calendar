@@ -1,33 +1,133 @@
 import { Injectable } from '@angular/core';
-import { CalendarEvent } from '../../calendar-event/calendar-event';
 import { CalendarEventCategory } from '../../models/calendar-event.model';
-import { CALENDAR_EVENT_CATEGORIES } from '../calendar-mock-data/calendar-mock-data';
+import { mergeArrays } from '../../utilities/array-utilities';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CalendarEventCategoryService {
-  
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
-  private categories: Array<CalendarEventCategory> = CALENDAR_EVENT_CATEGORIES;
+  private categories: Map<number, CalendarEventCategory> = new Map<number, CalendarEventCategory>();
 
-  public getAllCategories(): Array<CalendarEventCategory> {
-    return this.categories;
+
+  // #region Get Methods
+
+  /**
+   * Gets a category by its ID.
+   * Utilizes the local cache first, unless isToFetchFromSever is true.
+   * @param categoryId 
+   * @returns 
+   */
+  public getCategoryById(categoryId: number, isToFetchFromServer: boolean): CalendarEventCategory | null { 
+    let category = this.categories.get(categoryId) || null;
+
+    if (isToFetchFromServer || !category) {
+      category = this.fetchCategoryById(categoryId);
+      this.categories.set(categoryId, category as CalendarEventCategory);
+    }
+
+    return category;
   }
 
-  public getCategoryById(categoryId: number): CalendarEventCategory | null { 
-    const category = this.categories.find(cat => cat.id === categoryId);
-    if (category) {
-      return category;
-    } else {
-      // TO-DO: Fetch Category from server if not found locally
-      return null;
+  /**
+   * Gets all categories associated with a specific objective.
+   * @param objectiveId The ID of the objective to retrieve categories for
+   * @param isToFetchFromServer Override cache retrieval and update cache
+   * @returns An array of accessible categories for the specific objective
+   */
+  public getCategoriesByObjectiveId(objectiveId: number, isToFetchFromServer: boolean): Array<CalendarEventCategory> | null {
+    let categories = isToFetchFromServer ? 
+      null :
+      Array.from(this.categories.values()).filter(category => category.objectiveId === objectiveId);
+
+    if (isToFetchFromServer || !categories || categories.length === 0) {
+      categories = this.fetchCategoriesByObjectiveId(objectiveId);
+      this.updateLocalCategories(categories);
+    }
+
+    return categories || null;
+  }
+
+  /**
+   * Gets all categories.
+   * @param isToFetchFromServer Override cache retrieval and update cache
+   * @returns Returns and array of all accessible CalendarEventCategory objects
+   */
+  public getAllCategories(isToFetchFromServer: boolean): Array<CalendarEventCategory> {
+    let categories: Array<CalendarEventCategory> = Array.from(this.categories.values());
+
+    if (isToFetchFromServer || (!categories || categories.length === 0)) {
+      categories = this.fetchAllCategories();
+      this.updateLocalCategories(categories);
+    }
+
+    return categories;
+  }
+
+  // #endregion Get Methods
+
+  // #region Fetch Methods
+
+  /**
+   * Fetches a category from the server by its ID.
+   * @param categoryId The ID of the category to fetch from the server 
+   * @returns The category with the specified ID if found, otherwise null
+   */
+  fetchCategoryById(categoryId: number): CalendarEventCategory | null {
+    let category: CalendarEventCategory | null = null;
+    this.http.get<CalendarEventCategory>(`/api/categories/${categoryId}`).subscribe(
+      (data: CalendarEventCategory) => { category = data; } 
+    );
+
+    return category;
+  }
+
+  /**
+   * Fetches all categories from the server
+   * @returns An array of all accessible CalendarEventCategory objects
+   */
+  private fetchAllCategories(): Array<CalendarEventCategory> {
+    let categories: Array<CalendarEventCategory> = [];
+    this.http.get<Array<CalendarEventCategory>>(`api/categories`).subscribe(
+      (data: Array<CalendarEventCategory>) => { categories = data; }
+    );
+
+    return categories;
+  }
+
+  /**
+   * Fetches categories associated with a specific objective from the server
+   * @param objectiveId The ID of the objective to retrieve the categories for
+   * @returns An array of categories associated with the specified objective. An empty array if none found.
+   */
+  private fetchCategoriesByObjectiveId(objectiveId: number): Array<CalendarEventCategory> {
+    let categories: Array<CalendarEventCategory> = [];
+    this.http.get<Array<CalendarEventCategory>>(`/api/categories?objectiveId=${objectiveId}`).subscribe(
+      (data: Array<CalendarEventCategory>) => { categories = data; }
+    );
+
+    return categories;
+  }
+
+  // #endregion Fetch Methods
+
+  // #region Helper Methods
+
+  private updateLocalCategories(categoriesToAdd?: Array<CalendarEventCategory>, categoriesToRemove?: Array<CalendarEventCategory>): void {
+    if (categoriesToAdd) {
+      for (const category of categoriesToAdd) {
+        this.categories.set(category.id, category);
+      }
+    }
+
+    if (categoriesToRemove) {
+      for (const category of categoriesToRemove) {
+        this.categories.delete(category.id);
+      }
     }
   }
 
-  fetchCategoryById(categoryId: number): CalendarEventCategory | null {
-    // TO-DO: Implement server fetch logic here
-    return null;
-  }
+  // #endregion Helper Methods
 }
