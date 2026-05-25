@@ -113,8 +113,56 @@ export class CalendarEventCategoryService {
 
   // #endregion Fetch Methods
 
+  // #region Update Methods
+
+  /**
+   * Updates a category on the server and updates the local cache if successful.
+   * @param category The Category to update
+   * @returns The updated category if the update was successful, otherwise null
+   */
+  private updateCategory(category: CalendarEventCategory): CalendarEventCategory | null {
+    let updatedCategory: CalendarEventCategory | null = null;
+    this.http.put<CalendarEventCategory>(`/api/categories/${category.id}`, category).subscribe(
+      (data: CalendarEventCategory) => { updatedCategory = data; }
+    );
+
+    if (updatedCategory) {
+      this.updateLocalCategories([updatedCategory]);
+    }
+
+    return updatedCategory;
+  }
+
+  // #endregion Update Methods
+
+  // #region Delete Methods
+
+  /**
+   * Deletes a category from the server and updates the local cache if successful.
+   * @param categoryId The ID of the category to delete
+   * @returns A boolean indicating whether the deletion was successful
+   */
+  private deleteCategory(categoryId: number): boolean {
+    let isDeleted = false;
+
+    this.http.delete(`/api/categories/${categoryId}`).subscribe(
+      () => { isDeleted = true; }
+    );
+
+    this.updateLocalCategories(undefined, [{ id: categoryId, name: '', color: '', objectiveId: 0 }]);
+
+    return isDeleted;
+  }
+
+  // #endregion Delete Methods
+
   // #region Helper Methods
 
+  /**
+   * Updates the local cache of categories
+   * @param categoriesToAdd  The categories to add to the local cache, by ID
+   * @param categoriesToRemove The categories to remove from local cache by ID
+   */
   private updateLocalCategories(categoriesToAdd?: Array<CalendarEventCategory>, categoriesToRemove?: Array<CalendarEventCategory>): void {
     if (categoriesToAdd) {
       for (const category of categoriesToAdd) {
