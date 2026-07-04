@@ -9,6 +9,10 @@ import { HttpClient } from '@angular/common/http';
 export class CalendarEventCategoryService {
   constructor(private http: HttpClient) {}
 
+  /**
+   * Cached CalendarEventCategory objects.
+   * This is a Map since the user determines the number of Categories.
+   */
   private categories: Map<number, CalendarEventCategory> = new Map<number, CalendarEventCategory>();
 
 
@@ -138,12 +142,12 @@ export class CalendarEventCategoryService {
   // #region Delete Methods
 
   /**
-   * Deletes a category from the server and updates the local cache if successful.
+   * Deletes a category from the server and updates the local cache if successful
    * @param categoryId The ID of the category to delete
    * @returns A boolean indicating whether the deletion was successful
    */
   private deleteCategory(categoryId: number): boolean {
-    let isDeleted = false;
+    let isDeleted: boolean = false;
 
     this.http.delete(`/api/categories/${categoryId}`).subscribe(
       () => { isDeleted = true; }
@@ -160,19 +164,20 @@ export class CalendarEventCategoryService {
 
   /**
    * Updates the local cache of categories
-   * @param categoriesToAdd  The categories to add to the local cache, by ID
+   * @param categoriesToAdd  The categories to add to the local cache by ID
    * @param categoriesToRemove The categories to remove from local cache by ID
    */
   private updateLocalCategories(categoriesToAdd?: Array<CalendarEventCategory>, categoriesToRemove?: Array<CalendarEventCategory>): void {
-    if (categoriesToAdd) {
-      for (const category of categoriesToAdd) {
-        this.categories.set(category.id, category);
-      }
-    }
-
+    // Removal done first -> prioritize retaining information
     if (categoriesToRemove) {
       for (const category of categoriesToRemove) {
         this.categories.delete(category.id);
+      }
+    }
+    
+    if (categoriesToAdd) {
+      for (const category of categoriesToAdd) {
+        this.categories.set(category.id, category);
       }
     }
   }
