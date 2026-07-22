@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CalendarEventCategory } from '../../models/calendar-event.model';
-import { mergeArrays } from '../../utilities/array-utilities';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import ServiceDataSource from '../../enums/DataSource';
 
 @Injectable({
   providedIn: 'root'
@@ -13,61 +14,65 @@ export class CalendarEventCategoryService {
    * Cached CalendarEventCategory objects.
    * This is a Map since the user determines the number of Categories.
    */
-  private categories: Map<number, CalendarEventCategory> = new Map<number, CalendarEventCategory>();
+  private categories$: BehaviorSubject<Map<number, CalendarEventCategory>> = new BehaviorSubject<Map<number, CalendarEventCategory>>(new Map());
 
+  // #region Refresh Methods
+
+  // #end 
 
   // #region Get Methods
 
   /**
    * Gets a category by its ID.
-   * Utilizes the local cache first, unless isToFetchFromSever is true.
-   * @param categoryId 
-   * @returns 
+   * @param categoryId The ID of the category to retrieve
+   * @param [source=ServiceDataSource.Cache] The source to retrieve the category. If external, the local cache will be updated.
+   * @returns The category with the specified ID.
    */
-  public getCategoryById(categoryId: number, isToFetchFromServer: boolean): CalendarEventCategory | null { 
-    let category = this.categories.get(categoryId) || null;
-
-    if (isToFetchFromServer || !category) {
-      category = this.fetchCategoryById(categoryId);
-      this.categories.set(categoryId, category as CalendarEventCategory);
-    }
-
-    return category;
+  public getCategoryById(categoryId: number, source: ServiceDataSource = ServiceDataSource.Cache): Observable<CalendarEventCategory | null> { 
+    return source == ServiceDataSource.Cache ? 
+      new Observable<CalendarEventCategory | null>((subscriber) => {
+        subscriber.next(this.categories$.getValue().get(categoryId) ?? null);
+        subscriber.complete();
+      })
+      : this.fetchCategoryById(categoryId);
   }
 
   /**
    * Gets all categories associated with a specific objective.
    * @param objectiveId The ID of the objective to retrieve categories for
-   * @param isToFetchFromServer Override cache retrieval and update cache
+   * @param [source=ServiceDataSource.Cache] The source to retrieve the categories. If external, the local cache will be updated.
    * @returns An array of accessible categories for the specific objective
    */
-  public getCategoriesByObjectiveId(objectiveId: number, isToFetchFromServer: boolean): Array<CalendarEventCategory> | null {
-    let categories = isToFetchFromServer ? 
-      null :
-      Array.from(this.categories.values()).filter(category => category.objectiveId === objectiveId);
-
-    if (isToFetchFromServer || !categories || categories.length === 0) {
-      categories = this.fetchCategoriesByObjectiveId(objectiveId);
-      this.updateLocalCategories(categories);
-    }
-
-    return categories || null;
+  public getCategoriesByObjectiveId(objectiveId: number, source: ServiceDataSource = ServiceDataSource.Cache): Observable<Array<CalendarEventCategory> | null> {
+      switch (source) {
+        case ServiceDataSource.Server:
+          return this.fetchCategoriesByObjectiveId(objectiveId);
+        case ServiceDataSource.Cache:
+        default:
+          return new Observable<Array<CalendarEventCategory>>((subscriber) => {
+            subscriber.next([...this.categories$.getValue().values()]
+              .filter(category => category.objectiveId == objectiveId)); 
+            subscriber.complete();
+          });
+      }
   }
 
   /**
    * Gets all categories.
-   * @param isToFetchFromServer Override cache retrieval and update cache
+   * @param [source=ServiceDataSource.Cache] The source to retrieve the categories. If external, the local cache will be updated.
    * @returns Returns and array of all accessible CalendarEventCategory objects
    */
-  public getAllCategories(isToFetchFromServer: boolean): Array<CalendarEventCategory> {
-    let categories: Array<CalendarEventCategory> = Array.from(this.categories.values());
-
-    if (isToFetchFromServer || (!categories || categories.length === 0)) {
-      categories = this.fetchAllCategories();
-      this.updateLocalCategories(categories);
+  public getAllCategories(source: ServiceDataSource = ServiceDataSource.Cache): Observable<Array<CalendarEventCategory>> {
+    switch (source) {
+      case ServiceDataSource.Server:
+        return this.fetchAllCategories();
+      case ServiceDataSource.Cache:
+      default:
+        return new Observable<Array<CalendarEventCategory>>((subscriber) => {
+          subscriber.next([...this.categories$.getValue().values()]);
+          subscriber.complete();
+        });
     }
-
-    return categories;
   }
 
   // #endregion Get Methods
@@ -79,26 +84,19 @@ export class CalendarEventCategoryService {
    * @param categoryId The ID of the category to fetch from the server 
    * @returns The category with the specified ID if found, otherwise null
    */
-  fetchCategoryById(categoryId: number): CalendarEventCategory | null {
-    let category: CalendarEventCategory | null = null;
-    this.http.get<CalendarEventCategory>(`/api/categories/${categoryId}`).subscribe(
-      (data: CalendarEventCategory) => { category = data; } 
-    );
-
-    return category;
+  fetchCategoryById(categoryId: number): Observable<CalendarEventCategory | null> {
+    return this.http.get<CalendarEventCategory>(`/api/categories/${categoryId}`).pipe(
+      tap((category: CalendarEventCategory) => this.updateLocalCategories([category])));
   }
 
   /**
    * Fetches all categories from the server
    * @returns An array of all accessible CalendarEventCategory objects
    */
-  private fetchAllCategories(): Array<CalendarEventCategory> {
-    let categories: Array<CalendarEventCategory> = [];
-    this.http.get<Array<CalendarEventCategory>>(`api/categories`).subscribe(
-      (data: Array<CalendarEventCategory>) => { categories = data; }
+  private fetchAllCategories(): Observable<Array<CalendarEventCategory>> {
+    return this.http.get<Array<CalendarEventCategory>>(`api/categories`).pipe(
+      tap((categories: Array<CalendarEventCategory>) => this.updateLocalCategories(categories))
     );
-
-    return categories;
   }
 
   /**
@@ -106,13 +104,10 @@ export class CalendarEventCategoryService {
    * @param objectiveId The ID of the objective to retrieve the categories for
    * @returns An array of categories associated with the specified objective. An empty array if none found.
    */
-  private fetchCategoriesByObjectiveId(objectiveId: number): Array<CalendarEventCategory> {
-    let categories: Array<CalendarEventCategory> = [];
-    this.http.get<Array<CalendarEventCategory>>(`/api/categories?objectiveId=${objectiveId}`).subscribe(
-      (data: Array<CalendarEventCategory>) => { categories = data; }
+  private fetchCategoriesByObjectiveId(objectiveId: number): Observable<Array<CalendarEventCategory>> {
+    return this.http.get<Array<CalendarEventCategory>>(`/api/categories?objectiveId=${objectiveId}`).pipe(
+      tap((categories: Array<CalendarEventCategory>) => this.updateLocalCategories(categories))
     );
-
-    return categories;
   }
 
   // #endregion Fetch Methods
@@ -124,17 +119,9 @@ export class CalendarEventCategoryService {
    * @param category The Category to update
    * @returns The updated category if the update was successful, otherwise null
    */
-  private updateCategory(category: CalendarEventCategory): CalendarEventCategory | null {
-    let updatedCategory: CalendarEventCategory | null = null;
-    this.http.put<CalendarEventCategory>(`/api/categories/${category.id}`, category).subscribe(
-      (data: CalendarEventCategory) => { updatedCategory = data; }
-    );
-
-    if (updatedCategory) {
-      this.updateLocalCategories([updatedCategory]);
-    }
-
-    return updatedCategory;
+  private updateCategory(category: CalendarEventCategory): Observable<CalendarEventCategory | null> {
+    return this.http.put<CalendarEventCategory>(`/api/categories/${category.id}`, category).pipe(
+      tap((category: CalendarEventCategory) => this.updateLocalCategories([category])));
   }
 
   // #endregion Update Methods
@@ -146,16 +133,10 @@ export class CalendarEventCategoryService {
    * @param categoryId The ID of the category to delete
    * @returns A boolean indicating whether the deletion was successful
    */
-  private deleteCategory(categoryId: number): boolean {
-    let isDeleted: boolean = false;
-
-    this.http.delete(`/api/categories/${categoryId}`).subscribe(
-      () => { isDeleted = true; }
-    );
-
-    this.updateLocalCategories(undefined, [{ id: categoryId, name: '', color: '', objectiveId: 0 }]);
-
-    return isDeleted;
+  private deleteCategory(categoryId: number): Observable<boolean> {
+    return this.http.delete<boolean>(`/api/categories/${categoryId}`).pipe(
+      tap(() => this.updateLocalCategories(undefined, [categoryId])),
+      map(() => true));
   }
 
   // #endregion Delete Methods
@@ -165,21 +146,25 @@ export class CalendarEventCategoryService {
   /**
    * Updates the local cache of categories
    * @param categoriesToAdd  The categories to add to the local cache by ID
-   * @param categoriesToRemove The categories to remove from local cache by ID
+   * @param categoryIdsToRemove The categories to remove from local cache by ID
    */
-  private updateLocalCategories(categoriesToAdd?: Array<CalendarEventCategory>, categoriesToRemove?: Array<CalendarEventCategory>): void {
+  private updateLocalCategories(categoriesToAdd?: Array<CalendarEventCategory>, categoryIdsToRemove?: Array<number>): void {
+    const currentCategories = new Map(this.categories$.getValue());
+
     // Removal done first -> prioritize retaining information
-    if (categoriesToRemove) {
-      for (const category of categoriesToRemove) {
-        this.categories.delete(category.id);
+    if (categoryIdsToRemove) {
+      for (const categoryId of categoryIdsToRemove) {
+        currentCategories.delete(categoryId);
       }
     }
     
     if (categoriesToAdd) {
       for (const category of categoriesToAdd) {
-        this.categories.set(category.id, category);
+        currentCategories.set(category.id, category);
       }
     }
+
+    this.categories$.next(currentCategories);
   }
 
   // #endregion Helper Methods
